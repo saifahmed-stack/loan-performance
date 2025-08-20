@@ -1,0 +1,204 @@
+import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, ComposedChart, Area, AreaChart } from 'recharts';
+
+const LoanDashboard = () => {
+  // Project Creation Data
+  const projectCreationData = [
+    { period: 'H1 2024', totalLoans: 3804, withProjects: 2525, ratio: 66.11 },
+    { period: 'H2 2024', totalLoans: 4473, withProjects: 4417, ratio: 98.75 },
+    { period: 'H1 2025', totalLoans: 4556, withProjects: 4554, ratio: 99.96 }
+  ];
+
+  // Quarterly Disbursement and Repayment Data
+  const quarterlyData = [
+    { quarter: 'Q1 2024', disbursed: 2398, withRepayment: 1316, ratio: 54.87 },
+    { quarter: 'Q2 2024', disbursed: 1406, withRepayment: 963, ratio: 68.49 },
+    { quarter: 'Q3 2024', disbursed: 1138, withRepayment: 1000, ratio: 87.87 },
+    { quarter: 'Q4 2024', disbursed: 3335, withRepayment: 2933, ratio: 87.94 }
+  ];
+
+  // 2025 Maturation Performance
+  const maturationData = [
+    { 
+      quarter: 'Q1 2025', 
+      expected: 1144, 
+      recorded: 1045, 
+      completed: 1023,
+      recordedRatio: 91.34,
+      completedRatio: 89.42 
+    },
+    { 
+      quarter: 'Q2 2025', 
+      expected: 3364, 
+      recorded: 2948, 
+      completed: 2614,
+      recordedRatio: 87.64,
+      completedRatio: 77.76 
+    }
+  ];
+
+  // Combined timeline data
+  const timelineData = [
+    { period: 'Q1 2024', type: 'Disbursement', loans: 2398, metric: 54.87, metricType: 'Repayment Records %' },
+    { period: 'Q2 2024', type: 'Disbursement', loans: 1406, metric: 68.49, metricType: 'Repayment Records %' },
+    { period: 'Q3 2024', type: 'Disbursement', loans: 1138, metric: 87.87, metricType: 'Repayment Records %' },
+    { period: 'Q4 2024', type: 'Disbursement', loans: 3335, metric: 87.94, metricType: 'Repayment Records %' },
+    { period: 'Q1 2025', type: 'Maturation', loans: 1144, metric: 91.34, metricType: 'Data Recording %' },
+    { period: 'Q2 2025', type: 'Maturation', loans: 3364, metric: 87.64, metricType: 'Data Recording %' }
+  ];
+
+  return (
+    <div className="w-full max-w-7xl mx-auto p-6 bg-gray-50">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Loan Performance Dashboard</h1>
+        <p className="text-gray-600">Comprehensive analysis of project creation, disbursements, and repayment tracking</p>
+      </div>
+
+      {/* Project Creation Trend */}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Project Creation Performance</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <ComposedChart data={projectCreationData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="period" />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" domain={[0, 100]} />
+            <Tooltip 
+              formatter={(value, name) => {
+                if (name === 'ratio') return [`${value}%`, 'Project Creation Rate'];
+                return [value.toLocaleString(), name === 'totalLoans' ? 'Total Loans' : 'With Projects'];
+              }}
+            />
+            <Legend />
+            <Bar yAxisId="left" dataKey="totalLoans" fill="#8884d8" name="Total Loans" />
+            <Bar yAxisId="left" dataKey="withProjects" fill="#82ca9d" name="With Projects" />
+            <Line yAxisId="right" type="monotone" dataKey="ratio" stroke="#ff7300" strokeWidth={3} name="Creation Rate %" />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <div className="mt-4 grid grid-cols-3 gap-4">
+          {projectCreationData.map((item) => (
+            <div key={item.period} className="bg-gray-50 p-3 rounded">
+              <div className="text-sm font-medium text-gray-600">{item.period}</div>
+              <div className="text-2xl font-bold text-blue-600">{item.ratio}%</div>
+              <div className="text-xs text-gray-500">{item.withProjects.toLocaleString()} of {item.totalLoans.toLocaleString()}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quarterly Disbursement and Repayment Tracking */}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Quarterly Loan Disbursement & Repayment Recording</h2>
+        <ResponsiveContainer width="100%" height={350}>
+          <ComposedChart data={quarterlyData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="quarter" />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" domain={[0, 100]} />
+            <Tooltip 
+              formatter={(value, name) => {
+                if (name === 'ratio') return [`${value}%`, 'Repayment Recording Rate'];
+                return [value.toLocaleString(), name === 'disbursed' ? 'Loans Disbursed' : 'With Repayment Records'];
+              }}
+            />
+            <Legend />
+            <Bar yAxisId="left" dataKey="disbursed" fill="#8884d8" name="Loans Disbursed" />
+            <Bar yAxisId="left" dataKey="withRepayment" fill="#82ca9d" name="With Repayment Records" />
+            <Line yAxisId="right" type="monotone" dataKey="ratio" stroke="#ff7300" strokeWidth={3} name="Recording Rate %" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* 2025 Maturation Performance */}
+      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">2025 Loan Maturation Performance</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={maturationData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="quarter" />
+            <YAxis />
+            <Tooltip 
+              formatter={(value, name) => {
+                const labels = {
+                  expected: 'Expected to Mature',
+                  recorded: 'Data Recorded',
+                  completed: 'Fully Completed'
+                };
+                return [value.toLocaleString(), labels[name] || name];
+              }}
+            />
+            <Legend />
+            <Bar dataKey="expected" fill="#ddd" name="Expected to Mature" />
+            <Bar dataKey="recorded" fill="#82ca9d" name="Data Recorded" />
+            <Bar dataKey="completed" fill="#8884d8" name="Fully Completed" />
+          </BarChart>
+        </ResponsiveContainer>
+        <div className="mt-4 grid grid-cols-2 gap-6">
+          {maturationData.map((item) => (
+            <div key={item.quarter} className="bg-gray-50 p-4 rounded">
+              <div className="text-lg font-semibold text-gray-800 mb-2">{item.quarter}</div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-gray-600">Data Recording</div>
+                  <div className="text-xl font-bold text-green-600">{item.recordedRatio}%</div>
+                  <div className="text-xs text-gray-500">{item.recorded.toLocaleString()} of {item.expected.toLocaleString()}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-600">Full Completion</div>
+                  <div className="text-xl font-bold text-blue-600">{item.completedRatio}%</div>
+                  <div className="text-xs text-gray-500">{item.completed.toLocaleString()} of {item.expected.toLocaleString()}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Performance Trend Timeline */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Overall Performance Timeline</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <AreaChart data={timelineData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="period" />
+            <YAxis domain={[0, 100]} />
+            <Tooltip 
+              formatter={(value, name) => {
+                if (name === 'metric') return [`${value}%`, timelineData.find(d => d.metric === value)?.metricType || 'Performance'];
+                return [value.toLocaleString(), 'Loans'];
+              }}
+            />
+            <Legend />
+            <Area type="monotone" dataKey="metric" stroke="#8884d8" fill="#8884d8" fillOpacity={0.3} name="Performance %" />
+          </AreaChart>
+        </ResponsiveContainer>
+        <div className="mt-4 text-sm text-gray-600">
+          <p><strong>Key Insight:</strong> The dramatic improvement in operational processes from Q3 2024 onwards (reaching ~88% repayment recording) 
+          is now reflecting in the strong 2025 maturation performance (87-91% data recording rates).</p>
+        </div>
+      </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+        <div className="bg-blue-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-blue-600">99.96%</div>
+          <div className="text-sm text-blue-800">Latest Project Creation Rate</div>
+        </div>
+        <div className="bg-green-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-green-600">87.94%</div>
+          <div className="text-sm text-green-800">Q4 2024 Repayment Recording</div>
+        </div>
+        <div className="bg-purple-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-purple-600">12,915</div>
+          <div className="text-sm text-purple-800">Total Loans 2024</div>
+        </div>
+        <div className="bg-orange-100 p-4 rounded-lg text-center">
+          <div className="text-2xl font-bold text-orange-600">4,508</div>
+          <div className="text-sm text-orange-800">Expected Maturations 2025</div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoanDashboard;
